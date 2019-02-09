@@ -1,25 +1,22 @@
 import scrapy
-import sys
+
 
 class BlogsSpider(scrapy.Spider):
 	name="blogs"
 	inc = 1
-
 	def __init__(self, *args, **kwargs):
-      		 super(BlogsSpider, self).__init__(*args, **kwargs)
-        	 self.start_urls = ['http://knowledge.wharton.upenn.edu/?s='+self.keywords]
-
+                super(BlogsSpider, self).__init__(*args, **kwargs)
+                self.start_urls = ['http://knowledge.wharton.upenn.edu/?s='+self.keywords]
 
 	def writeToFile(self, response):
-		print("writeToFile")
 		try:
-			fptr=open('blogs.txt','a')
+			fptr=open('blogs_data.txt','a+')
 			data = response.xpath('//div[contains(@class,"article-content")]').get()
 			print(type(data))
 			fptr.write(data.encode('utf-8'))
 			fptr.close()
 		except Exception as e:
-			print(e.message)
+			print("error",e.message)
 			print("error in file open")
 			
 
@@ -39,5 +36,4 @@ class BlogsSpider(scrapy.Spider):
 		BlogsSpider.inc = BlogsSpider.inc + 1
 		if BlogsSpider.inc < 20:
 			yield scrapy.Request(url='http://knowledge.wharton.upenn.edu/page/'+str(BlogsSpider.inc)+'/?s=behavior+economics',callback=self.parse)	
-
 
